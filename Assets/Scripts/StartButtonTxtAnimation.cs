@@ -3,28 +3,38 @@ using UnityEngine;
 using LitMotion;
 using LitMotion.Extensions;
 using UnityEngine.InputSystem;
+using UnityEditor.ShaderGraph.Internal;
 
 public class StartButtonTxtAnimation : MonoBehaviour
 {
     [SerializeField]
-    TextMeshProUGUI text;
+    float _animDuration = 1.5f;
+    [SerializeField]
+    float _animCancelDuration = 1f;
+    [SerializeField]
+    float _animFrom = 1.0f;
+    [SerializeField]
+    float _animTo = 1.5f;
     MotionHandle _textAnimHandle;
 
-    void OnEnable()
+    public void ReStart()
     {
+        if(_textAnimHandle.IsActive()) _textAnimHandle.Cancel();
+        this.gameObject.SetActive(true);
+
         _textAnimHandle = LMotion
-            .Create(from: 0.5f, to: 1.5f, duration: 1f)
+            .Create(from: _animFrom, to: _animTo, duration: _animDuration)
             .WithLoops(loops: -1, loopType: LoopType.Yoyo)
             .WithOnCancel(() =>
             {
-                LMotion.Create(from: text.transform.localScale, to: Vector3.zero, duration: 0.5f)
-                    .WithOnCancel(() =>
+                LMotion.Create(from: this.transform.localScale, to: Vector3.one, duration: _animCancelDuration)
+                    .WithOnComplete(() =>
                     {
-                        text.gameObject.SetActive(false);
+                        this.gameObject.SetActive(false);
                     })
-                    .BindToLocalScale(text.transform);
+                    .BindToLocalScale(this.transform);
             })
-            .BindToLocalScaleXYZ(text.transform);
+            .BindToLocalScaleXYZ(this.transform);
     }
 
     public void Canceled()

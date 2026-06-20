@@ -1,5 +1,7 @@
 using System.Collections.Generic;
+using Cysharp.Threading.Tasks;
 using TMPro;
+using UniRx;
 using UnityEngine;
 using UnityEngine.InputSystem;
 using UnityEngine.UI;
@@ -12,13 +14,9 @@ public class JoinPlayer : MonoBehaviour
     [SerializeField]
     Button _RemoveButton;
     [SerializeField]
-    InputAction _anyClickStart;
-    [SerializeField]
     PlayerData _playerData;
     [SerializeField]
     private List<GameObject> _players;
-    [SerializeField]
-    private TextMeshProUGUI text;
     [SerializeField]
     private StartButtonTxtAnimation _animTxt;
     private InputHandler _input;
@@ -36,7 +34,7 @@ public class JoinPlayer : MonoBehaviour
             if(_playerData.Players == 2)
             {
                 _input.Init();
-                _animTxt.gameObject.SetActive(true);
+                _animTxt.ReStart();
             }
         });
 
@@ -48,9 +46,16 @@ public class JoinPlayer : MonoBehaviour
             if(_playerData.Players == 1)
             {
                 _input.Disable();
-                _animTxt.gameObject.SetActive(false);
+                _animTxt.Canceled();
             }
         });
+
+        _input.IsStart
+            .Where(x => x == true)
+            .Subscribe(_ =>
+            {
+                Debug.Log("scene遷移");
+            }).AddTo(this);
     }
 
     void OnJoin()
