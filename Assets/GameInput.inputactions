@@ -1,0 +1,35 @@
+{
+    "version": 1,
+    "name": "GameInput",
+    "maps": [
+        {
+            "name": "Start",
+            "id": "3041d99a-3a6c-406b-b2e8-d50509983f98",
+            "actions": [
+                {
+                    "name": "StartSpace",
+                    "type": "Button",
+                    "id": "aa07e5a7-87ec-47f1-a6af-ffd9d6b0aa65",
+                    "expectedControlType": "",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": false
+                }
+            ],
+            "bindings": [
+                {
+                    "name": "",
+                    "id": "aa1f4070-633e-4724-a43e-6cd72ec973b8",
+                    "path": "<Keyboard>/space",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "StartSpace",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                }
+            ]
+        }
+    ],
+    "controlSchemes": []
+}
