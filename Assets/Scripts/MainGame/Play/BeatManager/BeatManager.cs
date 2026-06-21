@@ -2,31 +2,89 @@ using System;
 using UniRx;
 using UnityEngine;
 
-public class BeatManager : IBeatManager
+public class BeatManager : IBeatManager, IDisposable
 {
-    private double _currentBeat = 0;
-    public double CurrentBeat => _currentBeat;
-    private float _bpm = 120f;
+    private AudioSource _source;
+    private AudioClip _startClip;
+    private AudioClip _nomalClip;
+    private double _startDspTime = 0;
+    private double _currentTime;
+    public double CurrentTime => _currentTime;
+    private double _nextBeatTime = 0;
+    public double NextBeatTime => _nextBeatTime;
     private double _interval;
-    private ReactiveProperty<bool> _isBeatTime = new(false);
-    public ReactiveProperty<bool> IsBeatTime => _isBeatTime;
+    private double _bpm = 60;
+    private long _beatCount = 0;
+    private Subject<long> _onBeat = new();
+    // longがcountでそれに応じて爆発するかどうかを決める
+    public IObservable<long> OnBeat => _onBeat;
+    private IDisposable _disposable;
+    private bool _isStartMusic = false;
 
-    public void SetBPM(float bpm)
+    public BeatManager(
+        AudioSource source,
+        AudioClip startClip,
+        AudioClip nomalClip
+    )
     {
-        _bpm = bpm;
-        _interval = 60.0f / bpm;
+        _source = source;
+        _startClip = startClip;
+        _nomalClip = nomalClip;
+
+        SetBPM(_bpm);
     }
 
-    private void StartMusic()
+    public void AddBPM(double add)
     {
-        Observable.EveryUpdate()
-            .Subscribe(_ =>
-            {
-                while( _currentBeat <= AudioSettings.dspTime)
+        SetBPM(_bpm + add);
+    }
+
+    private void SetBPM(double bpm)
+    {
+        _bpm = bpm;
+        _interval = 60.0 / _bpm;
+        _nextBeatTime = _currentTime + _interval;
+    }
+
+    public void ResetBeatCount()
+    {
+        _beatCount = 0;
+    }
+
+    public void StartMusic()
+    {
+        if(_isStartMusic) return;
+
+        _isStartMusic = true;
+
+        _startDspTime = AudioSettings.dspTime;
+
+        _disposable = 
+            Observable.EveryUpdate()
+                .Subscribe(_ =>
                 {
-                    _currentBeat += _interval;
-                    _isBeatTime.Value = true;
-                }
-            });
+                    _currentTime =
+                        AudioSettings.dspTime - _startDspTime;
+
+                    while( _nextBeatTime <= _currentTime)
+                    {
+                        _beatCount++;
+                        _nextBeatTime += _interval;
+                        _onBeat.OnNext(_beatCount);
+
+                        if(_beatCount % 4 == 0)
+                        {
+                            _source.PlayOneShot(_startClip);
+                            continue;
+                        }
+
+                        _source.PlayOneShot(_nomalClip);
+                    }
+                });
+    }
+
+    public void Dispose()
+    {
+        _disposable.Dispose();
     }
 }

@@ -1,8 +1,10 @@
+using System;
 using UniRx;
 using UnityEngine;
 
 public interface IBeatManager
 {
-    public double CurrentBeat { get; }
-    public ReactiveProperty<bool> IsBeatTime { get; }
+    public IObservable<long> OnBeat { get; }
+    public double CurrentTime { get; }
+    public void StartMusic();
 }
