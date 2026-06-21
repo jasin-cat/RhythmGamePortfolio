@@ -29,6 +29,45 @@
                     "isPartOfComposite": false
                 }
             ]
+        },
+        {
+            "name": "Player",
+            "id": "8da0e8ea-d8f9-4cf5-8d27-d0a7efd91bfa",
+            "actions": [
+                {
+                    "name": "Pass",
+                    "type": "Value",
+                    "id": "8bc819bb-eb27-4c19-b90f-b4e1b5b7b4d6",
+                    "expectedControlType": "Vector2",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": true
+                }
+            ],
+            "bindings": [
+                {
+                    "name": "",
+                    "id": "dd0c61a6-65a6-4a35-b0a5-7fb6d8576c86",
+                    "path": "<Gamepad>/dpad",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "Pass",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "35db097b-ee8c-4a51-8abc-8f1d3968876a",
+                    "path": "<Gamepad>/leftStick",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "Pass",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                }
+            ]
         }
     ],
     "controlSchemes": []

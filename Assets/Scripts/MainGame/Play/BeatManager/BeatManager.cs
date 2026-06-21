@@ -2,21 +2,19 @@ using System;
 using UniRx;
 using UnityEngine;
 
-public class BeatManager
+public class BeatManager : IBeatManager
 {
-    private double _beatTime;
+    private double _currentBeat = 0;
+    public double CurrentBeat => _currentBeat;
+    private float _bpm = 120f;
     private double _interval;
-    private Action _onBeat;
-    public Action OnBeat 
-    {
-        get => _onBeat;
-        set
-        {
-            if(_onBeat is not null)
-                value = _onBeat;
+    private ReactiveProperty<bool> _isBeatTime = new(false);
+    public ReactiveProperty<bool> IsBeatTime => _isBeatTime;
 
-            _onBeat = value;
-        }
+    public void SetBPM(float bpm)
+    {
+        _bpm = bpm;
+        _interval = 60.0f / bpm;
     }
 
     private void StartMusic()
@@ -24,10 +22,10 @@ public class BeatManager
         Observable.EveryUpdate()
             .Subscribe(_ =>
             {
-                while( _beatTime <= AudioSettings.dspTime)
+                while( _currentBeat <= AudioSettings.dspTime)
                 {
-                    _beatTime += _interval;
-                    _onBeat?.Invoke();
+                    _currentBeat += _interval;
+                    _isBeatTime.Value = true;
                 }
             });
     }

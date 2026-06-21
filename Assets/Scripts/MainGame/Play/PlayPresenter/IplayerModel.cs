@@ -1,0 +1,8 @@
+using UnityEngine;
+
+public interface IPlayerModel
+{
+    public int ID { get; }
+    public int HP { get; }
+    public bool IsAlive { get; }
+}
